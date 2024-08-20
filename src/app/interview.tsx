@@ -6,7 +6,7 @@ import { InterviewState } from "~/lib/types";
 import { messages } from "~/server/db/schema";
 import { experimental_useObject as useObject } from "ai/react";
 import { InferInsertModel } from "drizzle-orm";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { toast } from "sonner";
 
@@ -25,7 +25,15 @@ export function Interview({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isSynthesizingSpeech, setIsSynthesizingSpeech] = useState(false);
 
-  const interviewerSpeaks = async (text: string) => {
+  const scrollRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [conversation]);
+
+  const interviewerSpeaks = async (text: string): Promise<void> => {
     setIsSynthesizingSpeech(true);
     const base64Audio = await textToMp3(text);
     if (!base64Audio) {
@@ -37,14 +45,21 @@ export function Interview({
     const speechBlob = base64ToBlob(base64Audio);
     const url = URL.createObjectURL(speechBlob);
     audioRef.current = new Audio(url);
-    audioRef.current
-      .play()
-      .then(() => {
-        audioRef.current?.addEventListener("ended", () => {
-          audioRef.current = null;
+
+    return new Promise((res) => {
+      audioRef
+        .current!.play()
+        .then(() => {
+          audioRef.current?.addEventListener("ended", () => {
+            audioRef.current = null;
+            res();
+          });
+        })
+        .catch((err) => {
+          toast.error(`Error speaking: ${err}`);
+          res();
         });
-      })
-      .catch((err) => toast.error(`Error speaking: ${err}`));
+    });
   };
 
   const interviewerStops = () => {
@@ -61,8 +76,6 @@ export function Interview({
       const interviewerTextResponse =
         object?.response ?? "Sorry, there was an error with the last response.";
 
-      interviewerSpeaks(interviewerTextResponse);
-
       const interviewerMessage: Message = {
         transcriptionId,
         role: "interviewer",
@@ -70,10 +83,12 @@ export function Interview({
       };
       setConversation((prev) => [...prev, interviewerMessage]);
 
-      if (object?.terminate) {
-        toast.info("Interview complete. Thank you for your time.");
-        endInterview();
-      }
+      interviewerSpeaks(interviewerTextResponse).then(() => {
+        if (object?.terminate) {
+          toast.info("Interview complete. Thank you for your time.");
+          endInterview();
+        }
+      });
     },
   });
 
@@ -87,7 +102,10 @@ export function Interview({
     setConversation((prev) => [...prev, intervieweeMessage]);
   };
 
-  const endInterview = () => setInterviewState(InterviewState.completed);
+  const endInterview = () => {
+    interviewerStops();
+    setInterviewState(InterviewState.completed);
+  };
 
   return (
     <div className="bg-apriora-blue px-40 py-20">
@@ -102,7 +120,10 @@ export function Interview({
           <div className="w-full border-b border-gray-400 px-10 pb-4 pt-6">
             <p className="text-center text-sm">Live Transcript</p>
           </div>
-          <ul className="flex w-full flex-1 flex-col items-start gap-y-3 overflow-y-scroll p-2">
+          <ul
+            ref={scrollRef}
+            className="flex w-full flex-1 flex-col items-start gap-y-3 overflow-y-scroll p-2"
+          >
             {conversation.map((c, index) => (
               <div key={index} className="flex flex-col justify-start gap-y-1">
                 {c.role === "interviewee" ? (

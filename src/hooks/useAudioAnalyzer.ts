@@ -52,7 +52,9 @@ export function useAudioAnalyzer({
           }
         }
       } else {
-        onResponseStart();
+        if (average > LOUDNESS_THRESHOLD) {
+          onResponseStart();
+        }
       }
 
       animationFrameRef.current = requestAnimationFrame(checkAudioLevel);

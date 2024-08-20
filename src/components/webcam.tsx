@@ -10,10 +10,10 @@ import { toast } from "sonner";
 import { Button } from "./button";
 
 export function ManagedWebcam({
-  setTranscription,
+  handleIntervieweeResponse,
   closeWebcam,
 }: {
-  setTranscription: React.Dispatch<React.SetStateAction<string[]>>;
+  handleIntervieweeResponse: (response: string) => void;
   closeWebcam: () => void;
 }) {
   const webcamRef = useRef<Webcam>(null);
@@ -97,7 +97,7 @@ export function ManagedWebcam({
       return;
     }
 
-    setTranscription((prev) => [...prev, transcription]);
+    handleIntervieweeResponse(transcription);
     blobsRef.current = null;
   }, [mediaRecorderRef, setIsCapturing]);
 

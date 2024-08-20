@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   serial,
@@ -147,17 +148,22 @@ export const transcriptions = createTable(
   }),
 );
 
+export const roleEnum = pgEnum("role", ["interviewer", "interviewee"]);
+
 export const messages = createTable(
   "messages",
   {
-    id: uuid("id").primaryKey().notNull(),
+    id: uuid("id")
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
     transcriptionId: integer("transcription_id")
       .notNull()
       .references(() => transcriptions.id, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
-    role: text("role").notNull(),
+    role: roleEnum("role").notNull(),
     content: text("content").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)

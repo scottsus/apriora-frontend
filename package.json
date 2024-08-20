@@ -15,9 +15,11 @@
     "start": "next start"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.50",
     "@auth/drizzle-adapter": "^1.1.0",
     "@breezystack/lamejs": "^1.2.7",
     "@t3-oss/env-nextjs": "^0.10.1",
+    "ai": "^3.3.12",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.33.0",

@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.1.0",
+    "@breezystack/lamejs": "^1.2.7",
     "@t3-oss/env-nextjs": "^0.10.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.33.0",
@@ -23,9 +24,12 @@
     "lucide-react": "^0.428.0",
     "next": "^14.2.4",
     "next-auth": "^4.24.7",
+    "openai": "^4.56.0",
     "postgres": "^3.4.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-webcam": "^7.2.0",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
     "zod": "^3.23.3"
   },

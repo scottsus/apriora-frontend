@@ -1,9 +1,9 @@
-import Link from "next/link";
+import { ManagedWebcam } from "~/components/webcam";
 
 export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
-      <h1>Hey Aaron 👋</h1>
+      <ManagedWebcam />
     </main>
   );
 }

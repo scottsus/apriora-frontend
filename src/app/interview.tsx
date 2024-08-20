@@ -1,6 +1,7 @@
 "use client";
 
 import { ManagedWebcam } from "~/components/webcam";
+import { InterviewState } from "~/lib/types";
 import { messages } from "~/server/db/schema";
 import { experimental_useObject as useObject } from "ai/react";
 import { InferInsertModel } from "drizzle-orm";
@@ -8,7 +9,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { interviewResponseSchema } from "./api/interview/schema";
-import { InterviewState } from "./page";
 
 const transcriptionId = 1; // TODO: Use DB
 

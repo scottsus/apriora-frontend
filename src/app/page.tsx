@@ -1,15 +1,10 @@
 "use client";
 
 import { Button } from "~/components/button";
+import { InterviewState } from "~/lib/types";
 import { useState } from "react";
 
 import { Interview } from "./interview";
-
-export enum InterviewState {
-  initial,
-  inProgress,
-  completed,
-}
 
 export default function HomePage() {
   const [interviewState, setInterviewState] = useState<InterviewState>(

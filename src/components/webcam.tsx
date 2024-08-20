@@ -99,7 +99,7 @@ export function ManagedWebcam({
 
     handleIntervieweeResponse(transcription);
     blobsRef.current = null;
-  }, [mediaRecorderRef, setIsCapturing]);
+  }, [mediaRecorderRef, setIsCapturing, handleIntervieweeResponse]);
 
   return (
     <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">

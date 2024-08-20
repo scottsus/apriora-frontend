@@ -12,6 +12,9 @@ const config: Config = {
       },
     },
     colors: {
+      apriora: {
+        blue: "#6684FF",
+      },
       ...colors,
     },
   },

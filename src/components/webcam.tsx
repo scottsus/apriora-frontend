@@ -6,6 +6,8 @@ import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
 
+import { Button } from "./button";
+
 export function ManagedWebcam() {
   const webcamRef = useRef<Webcam>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -95,30 +97,43 @@ export function ManagedWebcam() {
   }, [mediaRecorderRef, setIsCapturing]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-y-3 overflow-hidden rounded-lg">
-      <Webcam audio muted ref={webcamRef} />
-      {!isCapturing ? (
-        <button
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
-          onClick={handleResponseStart}
-        >
-          Start
-        </button>
-      ) : (
-        <button
-          className="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-600"
-          onClick={handleResponseStop}
-        >
-          Stop
-        </button>
-      )}
-      <ul className="mx-auto mt-4 max-w-md space-y-2">
-        {transcription.map((t, index) => (
-          <li key={index} className="rounded-md bg-gray-100 p-2 shadow-sm">
-            {t}
-          </li>
-        ))}
-      </ul>
+    <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">
+      <div className="flex flex-col justify-center gap-y-4 rounded-lg bg-gray-900 p-4">
+        <div className="overflow-hidden rounded-md">
+          <Webcam audio muted ref={webcamRef} />
+        </div>
+        {!isCapturing ? (
+          <Button
+            variant="primary"
+            className="mx-auto w-1/3"
+            onClick={handleResponseStart}
+          >
+            Start
+          </Button>
+        ) : (
+          <Button
+            variant="destructive"
+            className="mx-auto w-1/3"
+            onClick={handleResponseStop}
+          >
+            Stop
+          </Button>
+        )}
+      </div>
+
+      <div className="flex h-full w-72 flex-col items-center justify-start gap-y-2 bg-gray-100">
+        <div className="w-full border-b border-gray-400 px-10 pb-4 pt-6">
+          <p className="text-center text-sm">Live Transcript</p>
+        </div>
+        <ul className="flex w-full flex-1 flex-col items-start gap-y-3 overflow-y-scroll p-2">
+          {transcription.map((t, index) => (
+            <div key={index} className="flex flex-col justify-start gap-y-1">
+              <p className="text-sm font-medium">Scott</p>
+              <p className="rounded-md bg-gray-200 p-2 text-sm">{t}</p>
+            </div>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

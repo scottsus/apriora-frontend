@@ -1,11 +1,13 @@
 "use client";
 
+import { textToMp3 } from "~/actions/speak";
 import { ManagedWebcam } from "~/components/webcam";
 import { InterviewState } from "~/lib/types";
 import { messages } from "~/server/db/schema";
 import { experimental_useObject as useObject } from "ai/react";
 import { InferInsertModel } from "drizzle-orm";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
 import { toast } from "sonner";
 
 import { interviewResponseSchema } from "./api/interview/schema";
@@ -20,16 +22,51 @@ export function Interview({
   setInterviewState: React.Dispatch<React.SetStateAction<InterviewState>>;
 }) {
   const [conversation, setConversation] = useState<Message[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isSynthesizingSpeech, setIsSynthesizingSpeech] = useState(false);
+
+  const interviewerSpeaks = async (text: string) => {
+    setIsSynthesizingSpeech(true);
+    const base64Audio = await textToMp3(text);
+    if (!base64Audio) {
+      toast.error("Unable to synthesize interviewer's speech from text.");
+      return;
+    }
+    setIsSynthesizingSpeech(false);
+
+    const speechBlob = base64ToBlob(base64Audio);
+    const url = URL.createObjectURL(speechBlob);
+    audioRef.current = new Audio(url);
+    audioRef.current
+      .play()
+      .then(() => {
+        audioRef.current?.addEventListener("ended", () => {
+          audioRef.current = null;
+        });
+      })
+      .catch((err) => toast.error(err));
+  };
+
+  const interviewerStops = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
 
   const { submit } = useObject({
     api: "/api/interview",
     schema: interviewResponseSchema,
     onFinish({ object }) {
+      const interviewerTextResponse =
+        object?.response ?? "Sorry, there was an error with the last response.";
+
+      interviewerSpeaks(interviewerTextResponse);
+
       const interviewerMessage: Message = {
         transcriptionId,
         role: "interviewer",
-        content:
-          object?.response ?? "Unable to transcribe interviewer response.",
+        content: interviewerTextResponse,
       };
       setConversation((prev) => [...prev, interviewerMessage]);
 
@@ -56,6 +93,7 @@ export function Interview({
     <div className="bg-apriora-blue px-40 py-20">
       <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">
         <ManagedWebcam
+          interruptInterviewer={interviewerStops}
           handleIntervieweeResponse={handleIntervieweeResponse}
           closeWebcam={endInterview}
         />
@@ -84,9 +122,23 @@ export function Interview({
                 )}
               </div>
             ))}
+            <span className="flex w-full justify-center">
+              {isSynthesizingSpeech && <ThreeDots color="gray" />}
+            </span>
           </ul>
         </div>
       </div>
     </div>
   );
+}
+
+function base64ToBlob(base64Audio: string) {
+  const binary = atob(base64Audio);
+  const array = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    array[i] = binary.charCodeAt(i);
+  }
+  const blob = new Blob([array], { type: "audio/mp3" });
+
+  return blob;
 }

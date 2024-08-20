@@ -10,9 +10,11 @@ import { toast } from "sonner";
 import { Button } from "./button";
 
 export function ManagedWebcam({
+  interruptInterviewer,
   handleIntervieweeResponse,
   closeWebcam,
 }: {
+  interruptInterviewer: () => void;
   handleIntervieweeResponse: (response: string) => void;
   closeWebcam: () => void;
 }) {
@@ -23,6 +25,7 @@ export function ManagedWebcam({
 
   const handleResponseStart = useCallback(() => {
     setIsCapturing(true);
+    interruptInterviewer();
 
     const stream = webcamRef.current?.stream;
     if (!stream) {

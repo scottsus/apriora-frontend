@@ -44,7 +44,7 @@ export function Interview({
           audioRef.current = null;
         });
       })
-      .catch((err) => toast.error(err));
+      .catch((err) => toast.error(`Error speaking: ${err}`));
   };
 
   const interviewerStops = () => {

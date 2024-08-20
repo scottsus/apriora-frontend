@@ -1,6 +1,7 @@
 "use client";
 
 import { transcribeAudio } from "~/actions/transcribe";
+import { useAudioAnalyzer } from "~/hooks/useAudioAnalyzer";
 import { webmToMp3 } from "~/lib/webmToMp3";
 import { DoorOpenIcon } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
@@ -22,6 +23,7 @@ export function ManagedWebcam({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const blobsRef = useRef<Blob[] | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [isStreamReady, setIsStreamReady] = useState(false);
 
   const handleResponseStart = useCallback(() => {
     setIsCapturing(true);
@@ -54,7 +56,7 @@ export function ManagedWebcam({
       handleDataAvailable,
     );
     mediaRecorderRef.current.start();
-  }, [webcamRef, mediaRecorderRef, setIsCapturing]);
+  }, [webcamRef, mediaRecorderRef, setIsCapturing, interruptInterviewer]);
 
   const handleDataAvailable = ({ data }: BlobEvent) => {
     if (data.size === 0) return;
@@ -104,11 +106,24 @@ export function ManagedWebcam({
     blobsRef.current = null;
   }, [mediaRecorderRef, setIsCapturing, handleIntervieweeResponse]);
 
+  useAudioAnalyzer({
+    webcamRef,
+    isStreamReady,
+    isCapturing,
+    onResponseStart: handleResponseStart,
+    onResponseStop: handleResponseStop,
+  });
+
   return (
     <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">
       <div className="flex flex-col justify-center gap-y-4 rounded-lg bg-gray-900 p-4">
         <div className="overflow-hidden rounded-md">
-          <Webcam audio muted ref={webcamRef} />
+          <Webcam
+            audio
+            muted
+            ref={webcamRef}
+            onUserMedia={() => setIsStreamReady(true)}
+          />
         </div>
         <div className="flex w-full items-center justify-center">
           {!isCapturing ? (

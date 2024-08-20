@@ -24,6 +24,7 @@ export function Interview({
   const [conversation, setConversation] = useState<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isSynthesizingSpeech, setIsSynthesizingSpeech] = useState(false);
+  const [interviewerIsSpeaking, setInterviewerIsSpeaking] = useState(false);
 
   const scrollRef = useRef<HTMLUListElement>(null);
 
@@ -47,16 +48,19 @@ export function Interview({
     audioRef.current = new Audio(url);
 
     return new Promise((res) => {
+      setInterviewerIsSpeaking(true);
       audioRef
         .current!.play()
         .then(() => {
           audioRef.current?.addEventListener("ended", () => {
             audioRef.current = null;
+            setInterviewerIsSpeaking(false);
             res();
           });
         })
         .catch((err) => {
           toast.error(`Error speaking: ${err}`);
+          setInterviewerIsSpeaking(false);
           res();
         });
     });
@@ -113,6 +117,7 @@ export function Interview({
         <ManagedWebcam
           interruptInterviewer={interviewerStops}
           handleIntervieweeResponse={handleIntervieweeResponse}
+          interviewerIsSpeaking={interviewerIsSpeaking}
           closeWebcam={endInterview}
         />
 

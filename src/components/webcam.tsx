@@ -2,9 +2,12 @@
 
 import { transcribeAudio } from "~/actions/transcribe";
 import { useAudioAnalyzer } from "~/hooks/useAudioAnalyzer";
+import { cn } from "~/lib/utils";
 import { webmToMp3 } from "~/lib/webmToMp3";
 import { DoorOpenIcon, PauseIcon, PlayIcon } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
+import { Bars } from "react-loader-spinner";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
 
@@ -13,10 +16,12 @@ import { Button } from "./button";
 export function ManagedWebcam({
   interruptInterviewer,
   handleIntervieweeResponse,
+  interviewerIsSpeaking,
   closeWebcam,
 }: {
   interruptInterviewer: () => void;
   handleIntervieweeResponse: (response: string) => void;
+  interviewerIsSpeaking: boolean;
   closeWebcam: () => void;
 }) {
   const webcamRef = useRef<Webcam>(null);
@@ -117,14 +122,36 @@ export function ManagedWebcam({
   return (
     <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">
       <div className="flex flex-col justify-center gap-y-4 rounded-lg bg-gray-900 p-4">
-        <div className="overflow-hidden rounded-md">
+        <div className="relative overflow-hidden rounded-md">
           <Webcam
             audio
             muted
             ref={webcamRef}
             onUserMedia={() => setIsStreamReady(true)}
           />
+
+          <div
+            className={cn(
+              "absolute bottom-2 right-2 z-10 rounded-lg p-1",
+              interviewerIsSpeaking && "bg-white",
+            )}
+          >
+            <div className="relative flex h-24 w-24 flex-col items-center justify-between rounded-lg bg-gray-800 p-3">
+              <Image
+                src="/alex.png"
+                alt="Alex"
+                width={50}
+                height={50}
+                className="h-12 w-12 rounded-full object-cover"
+              />
+              <div className="flex h-4 w-full items-center justify-between">
+                <p className="text-xs text-white">Alex</p>
+                {interviewerIsSpeaking && <Bars width={20} color="white" />}
+              </div>
+            </div>
+          </div>
         </div>
+
         <div className="flex w-full items-center justify-center">
           {!isCapturing ? (
             <Button

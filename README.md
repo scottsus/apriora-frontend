@@ -1,29 +1,43 @@
-# Create T3 App
+# 🎨 Scott's Apriora
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Hiring the best candidates, faster 🏎️
 
-## What's next? How do I make an app with this?
+![AI Interview](public/interview.png)
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+### Tech Stack
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- t3 stack: next.js, tailwind, typescript, with server actions instead of trpc
+- drizzle ORM with Postgres db
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+### Other Notable Libraries
 
-## Learn More
+- react-webcam for video & audio streaming
+- ai & @ai-sdk for object generation (json mode)
+- openai for stt and tts
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+### Cloud Providers
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- Vercel for server
+- Neon for managed Postgres
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### What's next
 
-## How do I deploy this?
+1. Record the entire video stream
+   - record from start to end
+   - augment with Alex's inputs
+   - store in S3 bucket
+2. Actually store the transcripts
+   - currently not storing anything, even though the schema is ready (not actually using Neon 🤭)
+   - should store each `Message` and inside it a `timestamp` as part of the video stream
+3. Build a dashboard
+   - Replay the video stream with the transcripts
+   - Clicking on each bubble should rewind to that particular timestamp
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### Features I loved building
+
+- complete control using just voice - buttons are optional
+- ability to interrupt Alex when she's talking
+- the small square indicating when Alex is talking
+- prettifying the whole thing 🎨
+
+Overall, thanks for this super fun project. Would have built it even if it were not a test anyway. Let me know if you want me to implement some additional features. Hope to hear back soon 🚀

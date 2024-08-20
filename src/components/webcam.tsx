@@ -2,19 +2,24 @@
 
 import { transcribeAudio } from "~/actions/transcribe";
 import { webmToMp3 } from "~/lib/webmToMp3";
+import { DoorOpenIcon } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
 
 import { Button } from "./button";
 
-export function ManagedWebcam() {
+export function ManagedWebcam({
+  setTranscription,
+  closeWebcam,
+}: {
+  setTranscription: React.Dispatch<React.SetStateAction<string[]>>;
+  closeWebcam: () => void;
+}) {
   const webcamRef = useRef<Webcam>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const blobsRef = useRef<Blob[] | null>(null);
-
   const [isCapturing, setIsCapturing] = useState(false);
-  const [transcription, setTranscription] = useState<string[]>([]);
 
   const handleResponseStart = useCallback(() => {
     setIsCapturing(true);
@@ -102,37 +107,32 @@ export function ManagedWebcam() {
         <div className="overflow-hidden rounded-md">
           <Webcam audio muted ref={webcamRef} />
         </div>
-        {!isCapturing ? (
-          <Button
-            variant="primary"
-            className="mx-auto w-1/3"
-            onClick={handleResponseStart}
-          >
-            Start
-          </Button>
-        ) : (
+        <div className="flex w-full items-center justify-center">
+          {!isCapturing ? (
+            <Button
+              variant="primary"
+              className="mx-auto w-1/3 flex-grow-0"
+              onClick={handleResponseStart}
+            >
+              Start
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              className="mx-auto w-1/3 flex-grow-0"
+              onClick={handleResponseStop}
+            >
+              Stop
+            </Button>
+          )}
           <Button
             variant="destructive"
-            className="mx-auto w-1/3"
-            onClick={handleResponseStop}
+            className="w-16 flex-grow-0"
+            onClick={closeWebcam}
           >
-            Stop
+            <DoorOpenIcon />
           </Button>
-        )}
-      </div>
-
-      <div className="flex h-full w-72 flex-col items-center justify-start gap-y-2 bg-gray-100">
-        <div className="w-full border-b border-gray-400 px-10 pb-4 pt-6">
-          <p className="text-center text-sm">Live Transcript</p>
         </div>
-        <ul className="flex w-full flex-1 flex-col items-start gap-y-3 overflow-y-scroll p-2">
-          {transcription.map((t, index) => (
-            <div key={index} className="flex flex-col justify-start gap-y-1">
-              <p className="text-sm font-medium">Scott</p>
-              <p className="rounded-md bg-gray-200 p-2 text-sm">{t}</p>
-            </div>
-          ))}
-        </ul>
       </div>
     </div>
   );

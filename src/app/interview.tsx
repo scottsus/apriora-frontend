@@ -108,7 +108,7 @@ export function Interview({
   };
 
   return (
-    <div className="bg-apriora-blue px-40 py-20">
+    <div className="rounded-md bg-apriora-blue px-40 py-20">
       <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">
         <ManagedWebcam
           interruptInterviewer={interviewerStops}

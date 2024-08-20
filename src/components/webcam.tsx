@@ -3,7 +3,7 @@
 import { transcribeAudio } from "~/actions/transcribe";
 import { useAudioAnalyzer } from "~/hooks/useAudioAnalyzer";
 import { webmToMp3 } from "~/lib/webmToMp3";
-import { DoorOpenIcon } from "lucide-react";
+import { DoorOpenIcon, PauseIcon, PlayIcon } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
@@ -128,19 +128,19 @@ export function ManagedWebcam({
         <div className="flex w-full items-center justify-center">
           {!isCapturing ? (
             <Button
-              variant="primary"
-              className="mx-auto w-1/3 flex-grow-0"
+              variant="secondary"
+              className="mx-auto flex flex-grow-0 items-center"
               onClick={handleResponseStart}
             >
-              Start
+              <PlayIcon size={30} />
             </Button>
           ) : (
             <Button
               variant="secondary"
-              className="mx-auto w-1/3 flex-grow-0"
+              className="mx-auto flex flex-grow-0 items-center"
               onClick={handleResponseStop}
             >
-              Stop
+              <PauseIcon size={30} />
             </Button>
           )}
           <Button

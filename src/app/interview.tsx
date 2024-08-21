@@ -102,7 +102,7 @@ export function Interview({
       role: "interviewee",
       content: intervieweeResponse,
     };
-    submit({ intervieweeResponse });
+    submit({ intervieweeResponse, numResponses: conversation.length / 2 });
     setConversation((prev) => [...prev, intervieweeMessage]);
   };
 

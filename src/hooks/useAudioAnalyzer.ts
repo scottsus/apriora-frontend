@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import Webcam from "react-webcam";
 
 const LOUDNESS_THRESHOLD = 50;
+const SILENCE_THRESHOLD = 20;
 const SILENCE_DURATION = 2000;
 
 export function useAudioAnalyzer({
@@ -41,7 +42,7 @@ export function useAudioAnalyzer({
         dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
 
       if (isCapturing) {
-        if (average <= LOUDNESS_THRESHOLD) {
+        if (average <= SILENCE_THRESHOLD) {
           if (!silenceTimer) {
             silenceTimer = setTimeout(onResponseStop, SILENCE_DURATION);
           }

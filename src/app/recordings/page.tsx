@@ -10,7 +10,6 @@ export default async function RecordingsPage() {
         <div key={url} className="mb-6">
           <video className="w-full max-w-2xl" controls>
             <source src={url} type="video/webm" />
-            Your browser does not support the video tag.
           </video>
         </div>
       ))}

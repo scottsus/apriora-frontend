@@ -1,7 +1,7 @@
 import { openai } from "@ai-sdk/openai";
 import { streamObject } from "ai";
 
-import { interviewResponseSchema } from "./schema";
+import { interviewerResponseSchema } from "./schema";
 
 export async function POST(req: Request) {
   const {
@@ -30,8 +30,7 @@ export async function POST(req: Request) {
         and focus on the task at hand. Make sure to focus on the interview at all costs.
     `,
     prompt: `This was the last response by the interviewee ${intervieweeResponse}. This is response #${numResponses}.`,
-    schema: interviewResponseSchema,
-    // TODO: onFinish: ({object}) { save to db }
+    schema: interviewerResponseSchema,
   });
 
   return result.toTextStreamResponse();

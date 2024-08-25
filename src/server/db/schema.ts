@@ -1,5 +1,6 @@
-import { relations, sql } from "drizzle-orm";
+import { InferSelectModel, relations, sql } from "drizzle-orm";
 import {
+  bigint,
   index,
   integer,
   pgEnum,
@@ -131,8 +132,8 @@ export const verificationTokens = createTable(
   }),
 );
 
-export const transcriptions = createTable(
-  "transcriptions",
+export const interviews = createTable(
+  "interviews",
   {
     id: serial("id").primaryKey().notNull(),
     interviewee: text("interviewee").notNull(),
@@ -143,8 +144,42 @@ export const transcriptions = createTable(
       () => new Date(),
     ),
   },
+  (interview) => ({
+    idIdx: index("interviews_id_idx").on(interview.id),
+  }),
+);
+
+export const transcriptions = createTable(
+  "transcriptions",
+  {
+    id: serial("id").primaryKey().notNull(),
+    interviewId: integer("interview_id")
+      .notNull()
+      .references(() => interviews.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    interviewee: text("interviewee").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
   (transcription) => ({
     idIdx: index("transcriptions_id_idx").on(transcription.id),
+  }),
+);
+
+export const transcriptionsRelations = relations(
+  transcriptions,
+  ({ one, many }) => ({
+    interview: one(interviews, {
+      fields: [transcriptions.interviewId],
+      references: [interviews.id],
+    }),
+    message: many(messages),
   }),
 );
 
@@ -176,3 +211,39 @@ export const messages = createTable(
     idIdx: index("messages_id_idx").on(message.id),
   }),
 );
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  transcription: one(transcriptions, {
+    fields: [messages.transcriptionId],
+    references: [transcriptions.id],
+  }),
+}));
+
+export const videos = createTable("videos", {
+  id: uuid("id")
+    .default(sql`gen_random_uuid()`)
+    .primaryKey()
+    .notNull(),
+  interviewId: integer("interview_id")
+    .notNull()
+    .references(() => interviews.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  s3FileName: text("s3_file_name").notNull(),
+});
+
+export const audios = createTable("audios", {
+  id: uuid("id")
+    .default(sql`gen_random_uuid()`)
+    .primaryKey()
+    .notNull(),
+  interviewId: integer("interview_id")
+    .notNull()
+    .references(() => interviews.id, {
+      onDelete: "cascade",
+      onUpdate: "cascade",
+    }),
+  s3FileName: text("s3_file_name").notNull(),
+  startTime: bigint("start_time", { mode: "number" }).notNull(),
+});

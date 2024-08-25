@@ -15,6 +15,20 @@
       "when": 1724194529738,
       "tag": "0001_tiresome_anthem",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1724575823163,
+      "tag": "0002_nervous_invisible_woman",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1724576821127,
+      "tag": "0003_chief_jubilee",
+      "breakpoints": true
     }
   ]
 }

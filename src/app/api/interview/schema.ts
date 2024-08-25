@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const interviewResponseSchema = z.object({
+export const interviewerResponseSchema = z.object({
   response: z.string(),
   terminate: z.boolean(),
 });
 
-export type InterviewResponse = z.infer<typeof interviewResponseSchema>;
+export type InterviewerResponse = z.infer<typeof interviewerResponseSchema>;

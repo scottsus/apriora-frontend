@@ -149,39 +149,9 @@ export const interviews = createTable(
   }),
 );
 
-export const transcriptions = createTable(
-  "transcriptions",
-  {
-    id: serial("id").primaryKey().notNull(),
-    interviewId: integer("interview_id")
-      .notNull()
-      .references(() => interviews.id, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      }),
-    interviewee: text("interviewee").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
-  },
-  (transcription) => ({
-    idIdx: index("transcriptions_id_idx").on(transcription.id),
-  }),
-);
-
-export const transcriptionsRelations = relations(
-  transcriptions,
-  ({ one, many }) => ({
-    interview: one(interviews, {
-      fields: [transcriptions.interviewId],
-      references: [interviews.id],
-    }),
-    message: many(messages),
-  }),
-);
+export const interviewsRelations = relations(interviews, ({ many }) => ({
+  messages: many(messages),
+}));
 
 export const roleEnum = pgEnum("role", ["interviewer", "interviewee"]);
 
@@ -192,14 +162,15 @@ export const messages = createTable(
       .default(sql`gen_random_uuid()`)
       .primaryKey()
       .notNull(),
-    transcriptionId: integer("transcription_id")
+    interviewId: integer("interview_id")
       .notNull()
-      .references(() => transcriptions.id, {
+      .references(() => interviews.id, {
         onDelete: "cascade",
         onUpdate: "cascade",
       }),
     role: roleEnum("role").notNull(),
     content: text("content").notNull(),
+    startTime: bigint("start_time", { mode: "number" }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -213,9 +184,9 @@ export const messages = createTable(
 );
 
 export const messagesRelations = relations(messages, ({ one }) => ({
-  transcription: one(transcriptions, {
-    fields: [messages.transcriptionId],
-    references: [transcriptions.id],
+  interview: one(interviews, {
+    fields: [messages.interviewId],
+    references: [interviews.id],
   }),
 }));
 

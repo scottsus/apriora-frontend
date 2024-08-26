@@ -9,6 +9,18 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
 }
 
+export function calcTimeElapsed(startTime: number | null) {
+  return startTime ? Date.now() - startTime : 0;
+}
+
+export function formatTime(ms: number): string {
+  const seconds = ms / 1000;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
+
 export async function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((res, rej) => {
     const reader = new FileReader();

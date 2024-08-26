@@ -2,7 +2,7 @@
 
 import { transcribeAudio } from "~/actions/transcribe";
 import { webmToMp3 } from "~/lib/webmToMp3";
-import { RefObject, useCallback, useRef } from "react";
+import { RefObject, useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
 
@@ -12,16 +12,19 @@ export function useAudioRecorder({
   recordTranscript,
   webcamRef,
 }: {
-  onResponseStart: () => void;
+  onResponseStart: (
+    setStartTime: React.Dispatch<React.SetStateAction<number>>,
+  ) => void;
   onResponseStop: () => void;
-  recordTranscript: (transcription: string) => void;
+  recordTranscript: (transcription: string, startTime: number) => void;
   webcamRef: RefObject<Webcam>;
 }) {
   const audioRecorderRef = useRef<MediaRecorder | null>(null);
   const audioBlobsRef = useRef<Blob[]>([]);
+  const [startTime, setStartTime] = useState(0);
 
   const startAudioRecording = useCallback(() => {
-    onResponseStart();
+    onResponseStart(setStartTime);
 
     const stream = webcamRef.current?.stream;
     if (!stream) {
@@ -79,7 +82,7 @@ export function useAudioRecorder({
       return;
     }
 
-    recordTranscript(transcription);
+    recordTranscript(transcription, startTime);
 
     audioBlobsRef.current = [];
   }, [onResponseStop, audioRecorderRef, recordTranscript]);

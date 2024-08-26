@@ -1,13 +1,13 @@
 "use client";
 
 import { recordInterviewerAudio } from "~/actions/audio";
+import { storeMessage } from "~/actions/interview";
 import { textToMp3 } from "~/actions/speak";
 import { interviewerResponseSchema } from "~/app/api/interview/schema";
 import { base64ToBlob } from "~/lib/utils";
 import { messages } from "~/server/db/schema";
 import { experimental_useObject as useObject } from "ai/react";
 import { InferInsertModel } from "drizzle-orm";
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -15,7 +15,6 @@ type Message = InferInsertModel<typeof messages>;
 
 export function useInterviewer({
   interviewId,
-  transcriptId,
   interviewStartTime,
   setConversation,
 }: {
@@ -30,7 +29,6 @@ export function useInterviewer({
     speaking,
   }
 
-  const router = useRouter();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [terminateInterview, setTerminateInterview] = useState(false);
   const [interviewerState, setInterviewerState] = useState<InterviewerState>(
@@ -45,13 +43,15 @@ export function useInterviewer({
         object?.response ?? "Sorry, there was an error with the last response.";
 
       const interviewerMessage: Message = {
-        transcriptionId: transcriptId,
+        interviewId,
         role: "interviewer",
         content: thoughts,
+        startTime: interviewStartTime ? Date.now() - interviewStartTime : 0,
       };
       setConversation((prev) => [...prev, interviewerMessage]);
 
-      _interviewerThinks(thoughts)
+      storeMessage(interviewerMessage)
+        .then(() => _interviewerThinks(thoughts))
         .then((voice) => _interviewerSpeaks(voice))
         .then((res) => _recordInterviewerAudio(res))
         .then(() => {
@@ -81,9 +81,8 @@ export function useInterviewer({
     return new Promise<{ speechBlob: Blob; relativeStartTime: number }>(
       (res) => {
         setInterviewerState(InterviewerState.speaking);
-        const speakStartTime = Date.now();
         const relativeStartTime = interviewStartTime
-          ? speakStartTime - interviewStartTime
+          ? Date.now() - interviewStartTime
           : 0;
 
         audioRef

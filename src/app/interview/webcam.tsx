@@ -3,26 +3,27 @@
 import { useAudioAnalyzer } from "~/hooks/useAudioAnalyzer";
 import { useAudioRecorder } from "~/hooks/useAudioRecorder";
 import { useVideoRecorder } from "~/hooks/useVideoRecorder";
-import { cn } from "~/lib/utils";
+import { calcTimeElapsed, cn } from "~/lib/utils";
 import { DoorOpenIcon, PauseIcon, PlayIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Bars } from "react-loader-spinner";
 import Webcam from "react-webcam";
-import { toast } from "sonner";
 
 import { Button } from "../../components/button";
 
 export function ManagedWebcam({
   interviewId,
+  interviewStartTime,
   intervieweeResponds,
   interruptInterviewer,
   interviewerIsSpeaking,
   terminateInterview,
 }: {
   interviewId: number;
-  intervieweeResponds: (transcript: string) => void;
+  interviewStartTime: number | null;
+  intervieweeResponds: (transcript: string, startTime: number) => void;
   interruptInterviewer: () => void;
   interviewerIsSpeaking: boolean;
   terminateInterview: boolean;
@@ -37,7 +38,11 @@ export function ManagedWebcam({
     webcamRef,
   });
   const { startAudioRecording, stopAudioRecording } = useAudioRecorder({
-    onResponseStart: () => {
+    onResponseStart: (
+      setStartTime: React.Dispatch<React.SetStateAction<number>>,
+    ) => {
+      const DELAY = 1000;
+      setStartTime(calcTimeElapsed(interviewStartTime) - DELAY);
       setIsCapturing(true);
       interruptInterviewer();
     },
@@ -62,7 +67,7 @@ export function ManagedWebcam({
       console.error("Error stopping video recording:", err),
     );
 
-    router.push(`/recordings`);
+    router.push(`/recordings/${interviewId}`);
   }
 
   useEffect(() => {

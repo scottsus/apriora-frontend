@@ -25,7 +25,7 @@ const FOLDER_PREFIX = "recordings/";
 export async function getRecording(fileName: string): Promise<string> {
   const command = new GetObjectCommand({
     Bucket: BUCKET_NAME,
-    Key: fileName,
+    Key: `${FOLDER_PREFIX}${fileName}`,
   });
 
   try {

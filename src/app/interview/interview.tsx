@@ -1,21 +1,18 @@
 "use client";
 
+import { storeMessage } from "~/actions/interview";
 import { useConversation } from "~/hooks/useConversation";
 import { useInterviewer } from "~/hooks/useInterviewer";
 import { messages } from "~/server/db/schema";
 import { InferInsertModel } from "drizzle-orm";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 
 import { ManagedWebcam } from "./webcam";
 
-const transcriptionId = 1; // TODO: Use DB
-
 type Message = InferInsertModel<typeof messages>;
 
 export function Interview({ interviewId }: { interviewId: number }) {
-  const router = useRouter();
   const [interviewStartTime, setInterviewStartTime] = useState<number | null>(
     null,
   );
@@ -33,13 +30,16 @@ export function Interview({ interviewId }: { interviewId: number }) {
     setConversation,
   });
 
-  const intervieweeResponds = (transcript: string) => {
+  const intervieweeResponds = async (transcript: string, startTime: number) => {
     const intervieweeMessage: Message = {
-      transcriptionId,
+      interviewId,
       role: "interviewee",
       content: transcript,
+      startTime,
     };
+
     setConversation((prev) => [...prev, intervieweeMessage]);
+    await storeMessage(intervieweeMessage);
 
     interviewerResponds({
       intervieweeResponse: transcript,
@@ -56,6 +56,7 @@ export function Interview({ interviewId }: { interviewId: number }) {
       <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">
         <ManagedWebcam
           interviewId={interviewId}
+          interviewStartTime={interviewStartTime}
           interruptInterviewer={interviewerStops}
           intervieweeResponds={intervieweeResponds}
           interviewerIsSpeaking={interviewerState === InterviewerState.speaking}

@@ -22,6 +22,24 @@ const s3Client = new S3Client({
 const BUCKET_NAME = "apriora-bucket";
 const FOLDER_PREFIX = "recordings/";
 
+export async function getRecording(fileName: string): Promise<string> {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: fileName,
+  });
+
+  try {
+    const signedUrl = await getSignedUrl(s3Client, command, {
+      expiresIn: 3600, // URL expires in 1 hour
+    });
+
+    return signedUrl;
+  } catch (error) {
+    console.error("Error generating signed URL for recording:", error);
+    throw new Error("Failed to generate signed URL for recording");
+  }
+}
+
 export async function listRecordings(): Promise<string[]> {
   const command = new ListObjectsV2Command({
     Bucket: BUCKET_NAME,

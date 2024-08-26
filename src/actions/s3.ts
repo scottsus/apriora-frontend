@@ -132,8 +132,7 @@ export async function uploadVideo(formData: FormData): Promise<{
 
     return { uploadId, etag: ETag, parts };
   } catch (error) {
-    console.error("Error uploading video part to S3:", error);
-    throw new Error(`Failed to upload video part to S3: ${error}`);
+    throw new Error(`uploadVideo: ${error}`);
   }
 }
 

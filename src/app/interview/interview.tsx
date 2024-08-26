@@ -56,7 +56,7 @@ export function Interview({ interviewId }: { interviewId: number }) {
     if (interviewStartTime) {
       interviewerStarts({});
     }
-  }, [interviewStartTime]);
+  }, [interviewStartTime, interviewerStarts]);
 
   return (
     <div className="rounded-md bg-apriora-blue px-40 py-20">

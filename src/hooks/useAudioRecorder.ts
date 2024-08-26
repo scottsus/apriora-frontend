@@ -84,7 +84,7 @@ export function useAudioRecorder({
     recordTranscript(transcription, startTime);
 
     audioBlobsRef.current = [];
-  }, [onResponseStop, audioRecorderRef, recordTranscript]);
+  }, [onResponseStop, audioRecorderRef, recordTranscript, startTime]);
 
   function handleDataAvailable({ data }: BlobEvent) {
     if (data.size === 0) return;

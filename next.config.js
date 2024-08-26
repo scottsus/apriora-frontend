@@ -10,6 +10,10 @@ const config = {
     serverActions: {
       bodySizeLimit: "10MB",
     },
+    serverComponentsExternalPackages: [
+      "@aws-sdk/client-s3",
+      "@aws-sdk/s3-request-presigner",
+    ],
   },
 };
 

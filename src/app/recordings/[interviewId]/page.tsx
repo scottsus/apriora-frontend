@@ -13,8 +13,8 @@ export default async function RecordingsPage({
   const transcripts = await getTranscript({ interviewId: params.interviewId });
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <main className="-mt-20 flex h-full flex-col items-center justify-center">
       <Replay url={recordingUrl} transcripts={transcripts} />
-    </div>
+    </main>
   );
 }

@@ -24,9 +24,16 @@ export default async function RecordingsPage({
         </div>
       ) : (
         <div className="flex flex-col items-center gap-y-4">
-          <h1 className="text-4xl">Invalid URL 🫠</h1>
-          <Link href="/">
-            <Button>Take me back</Button>
+          <h1 className="text-4xl">
+            that&apos;s it! your video is now processing
+          </h1>
+          <p className="text-xl text-gray-700">
+            meanwhile, please check the gallery to see all the processed videos
+          </p>
+          <Link href="/recordings">
+            <Button variant="primary" className="mt-8 px-6 py-3 text-2xl">
+              Gallery
+            </Button>
           </Link>
         </div>
       )}

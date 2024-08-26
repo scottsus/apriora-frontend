@@ -54,13 +54,13 @@ export function ManagedWebcam({
     webcamRef,
   });
 
-  // useAudioAnalyzer({
-  //   webcamRef,
-  //   streamReady,
-  //   isCapturing,
-  //   onResponseStart: handleResponseStart,
-  //   onResponseStop: handleResponseStop,
-  // });
+  useAudioAnalyzer({
+    webcamRef,
+    streamReady,
+    isCapturing,
+    onResponseStart: startAudioRecording,
+    onResponseStop: stopAudioRecording,
+  });
 
   async function closeWebcam() {
     interruptInterviewer();
@@ -124,7 +124,7 @@ export function ManagedWebcam({
         <div className="flex w-full items-center justify-center">
           {!isCapturing ? (
             <Button
-              variant="secondary"
+              variant="tertiary"
               className="mx-auto flex flex-grow-0 items-center"
               onClick={startAudioRecording}
             >
@@ -132,7 +132,7 @@ export function ManagedWebcam({
             </Button>
           ) : (
             <Button
-              variant="secondary"
+              variant="tertiary"
               className="mx-auto flex flex-grow-0 items-center"
               onClick={stopAudioRecording}
             >

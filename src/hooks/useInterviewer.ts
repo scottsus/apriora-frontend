@@ -3,8 +3,11 @@
 import { recordInterviewerAudio } from "~/actions/audio";
 import { storeMessage } from "~/actions/postgres";
 import { textToMp3 } from "~/actions/speak";
-import { interviewerResponseSchema } from "~/app/api/interview/schema";
-import { base64ToBlob } from "~/lib/utils";
+import {
+  interviewerResponseSchema,
+  interviewerStartSchema,
+} from "~/app/api/interview/schema";
+import { base64ToBlob, calcTimeElapsed } from "~/lib/utils";
 import { messages } from "~/server/db/schema";
 import { experimental_useObject as useObject } from "ai/react";
 import { InferInsertModel } from "drizzle-orm";
@@ -35,8 +38,32 @@ export function useInterviewer({
     InterviewerState.listening,
   );
 
+  const { submit: interviewerStarts } = useObject({
+    api: "/api/interview/start",
+    schema: interviewerStartSchema,
+    onFinish({ object }) {
+      const introduction =
+        object?.introduction ??
+        "Sorry, there was an error with the introduction.";
+
+      const interviewerStartMessage: Message = {
+        interviewId,
+        role: "interviewer",
+        content: introduction,
+        startTime: 1,
+      };
+      setConversation([interviewerStartMessage]);
+
+      storeMessage(interviewerStartMessage)
+        .then(() => _interviewerThinks(introduction))
+        .then((voice) => _interviewerSpeaks(voice))
+        .then((res) => _recordInterviewerAudio(res))
+        .catch((err) => console.error("useInterviewer:", err));
+    },
+  });
+
   const { submit: interviewerResponds } = useObject({
-    api: "/api/interview",
+    api: "/api/interview/respond",
     schema: interviewerResponseSchema,
     onFinish({ object }) {
       const thoughts =
@@ -46,7 +73,7 @@ export function useInterviewer({
         interviewId,
         role: "interviewer",
         content: thoughts,
-        startTime: interviewStartTime ? Date.now() - interviewStartTime : 0,
+        startTime: calcTimeElapsed(interviewStartTime),
       };
       setConversation((prev) => [...prev, interviewerMessage]);
 
@@ -81,9 +108,7 @@ export function useInterviewer({
     return new Promise<{ speechBlob: Blob; relativeStartTime: number }>(
       (res) => {
         setInterviewerState(InterviewerState.speaking);
-        const relativeStartTime = interviewStartTime
-          ? Date.now() - interviewStartTime
-          : 0;
+        const relativeStartTime = calcTimeElapsed(interviewStartTime);
 
         audioRef
           .current!.play()
@@ -130,6 +155,7 @@ export function useInterviewer({
   return {
     InterviewerState,
     interviewerState,
+    interviewerStarts,
     interviewerResponds,
     interviewerStops,
     terminateInterview,

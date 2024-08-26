@@ -9,7 +9,9 @@ export async function recordInterviewerAudio(formData: FormData) {
   const startTime = Number(formData.get("relativeStartTime"));
   if (!interviewId || !audioFile || !startTime) {
     throw new Error(
-      "recordInterviewerAudio: missing interviewerId, audio file, or relative start time",
+      `recordInterviewerAudio: missing interviewerId, audio file, or relative start time
+        interviewerId: ${interviewId}, audioFile: ${audioFile}, startTime: ${startTime}
+      `,
     );
   }
 

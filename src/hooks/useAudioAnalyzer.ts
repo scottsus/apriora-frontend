@@ -9,13 +9,13 @@ const SILENCE_DURATION = 2000;
 
 export function useAudioAnalyzer({
   webcamRef,
-  isStreamReady,
+  streamReady,
   isCapturing,
   onResponseStart,
   onResponseStop,
 }: {
   webcamRef: React.RefObject<Webcam>;
-  isStreamReady: boolean;
+  streamReady: boolean;
   isCapturing: boolean;
   onResponseStart: () => void;
   onResponseStop: () => void;
@@ -75,9 +75,9 @@ export function useAudioAnalyzer({
   }, [webcamRef, isCapturing, onResponseStart, onResponseStop]);
 
   useEffect(() => {
-    if (isStreamReady) {
+    if (streamReady) {
       const cleanup = setupAudioAnalyzer();
       return cleanup;
     }
-  }, [isStreamReady, setupAudioAnalyzer]);
+  }, [streamReady, setupAudioAnalyzer]);
 }

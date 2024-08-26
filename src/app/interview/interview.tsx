@@ -20,6 +20,7 @@ export function Interview({ interviewId }: { interviewId: number }) {
   const {
     InterviewerState,
     interviewerState,
+    interviewerStarts,
     interviewerResponds,
     interviewerStops,
     terminateInterview,
@@ -50,6 +51,12 @@ export function Interview({ interviewId }: { interviewId: number }) {
   useEffect(() => {
     setInterviewStartTime(Date.now());
   }, []);
+
+  useEffect(() => {
+    if (interviewStartTime) {
+      interviewerStarts({});
+    }
+  }, [interviewStartTime]);
 
   return (
     <div className="rounded-md bg-apriora-blue px-40 py-20">

@@ -9,6 +9,7 @@ const buttonVariants = cva(
       variant: {
         primary: "bg-apriora-blue hover:brightness-125",
         secondary: "text-apriora-blue hover:underline hover:underline-offset-4",
+        tertiary: "text-white hover:bg-gray-700",
         destructive: "bg-red-500 hover:brightness-125",
       },
       size: {

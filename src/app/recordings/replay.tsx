@@ -95,32 +95,48 @@ export function Replay({
                 {c.role === "interviewee" ? (
                   <div>
                     <p className="text-sm font-medium">Scott</p>
-                    <p
-                      data-start-time={c.startTime}
-                      className={`cursor-pointer rounded-md bg-gray-200 p-2 text-sm transition-all hover:brightness-110 ${
-                        isCurrentTranscript(index)
-                          ? "ring-2 ring-yellow-400"
-                          : ""
-                      }`}
-                      onClick={() => jumpToTime(c.startTime / 1000)}
-                    >
-                      {formatTime(c.startTime)}: {c.content}
-                    </p>
+                    <div className="flex items-start gap-x-1">
+                      <p className="mt-1 text-xs text-gray-500">
+                        {formatTime(c.startTime)}
+                      </p>
+                      <div
+                        className={`cursor-pointer rounded-md bg-gray-200 p-2 text-sm transition-all hover:brightness-110 ${
+                          isCurrentTranscript(index)
+                            ? "ring-2 ring-yellow-400"
+                            : ""
+                        }`}
+                      >
+                        <p
+                          data-start-time={c.startTime}
+                          onClick={() => jumpToTime(c.startTime / 1000)}
+                        >
+                          {c.content}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div>
                     <p className="text-right text-sm font-medium">Alex</p>
-                    <p
-                      data-start-time={c.startTime}
-                      className={`cursor-pointer rounded-md bg-blue-400 p-2 text-sm transition-all hover:brightness-110 ${
-                        isCurrentTranscript(index)
-                          ? "ring-2 ring-yellow-400"
-                          : ""
-                      }`}
-                      onClick={() => jumpToTime(c.startTime / 1000)}
-                    >
-                      {formatTime(c.startTime)}: {c.content}
-                    </p>
+                    <div className="flex gap-x-1">
+                      <div
+                        className={`cursor-pointer rounded-md bg-blue-400 p-2 text-sm transition-all hover:brightness-110 ${
+                          isCurrentTranscript(index)
+                            ? "ring-2 ring-yellow-400"
+                            : ""
+                        }`}
+                      >
+                        <p
+                          data-start-time={c.startTime}
+                          onClick={() => jumpToTime(c.startTime / 1000)}
+                        >
+                          {c.content}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {formatTime(c.startTime)}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

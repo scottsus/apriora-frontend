@@ -29,3 +29,33 @@ export function StartInterviewButton({
     </Button>
   );
 }
+
+export function GalleryButton({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const onClick = () => router.push(`/recordings`);
+
+  return (
+    <Button
+      variant="secondary"
+      className="flex-grow-0 text-2xl"
+      onClick={onClick}
+    >
+      {children}
+    </Button>
+  );
+}
+
+export function HomeButton({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const onClick = () => router.push(`/`);
+
+  return (
+    <Button
+      variant="secondary"
+      className="flex-grow-0 text-2xl"
+      onClick={onClick}
+    >
+      {children}
+    </Button>
+  );
+}

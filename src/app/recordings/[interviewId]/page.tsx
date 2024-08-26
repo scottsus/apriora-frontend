@@ -1,5 +1,8 @@
 import { getRecording, getTranscript } from "~/actions/postgres";
 import { getRecordingUrl } from "~/actions/s3";
+import { Button } from "~/components/button";
+import { HomeButton } from "~/components/buttons";
+import Link from "next/link";
 
 import { Replay } from "../replay";
 
@@ -13,8 +16,20 @@ export default async function RecordingsPage({
   const transcripts = await getTranscript({ interviewId: params.interviewId });
 
   return (
-    <main className="-mt-20 flex h-full flex-col items-center justify-center">
-      <Replay url={recordingUrl} transcripts={transcripts} />
+    <main className="-mt-14 flex h-full flex-col items-center justify-center">
+      {recording ? (
+        <div className="flex flex-col items-center gap-y-2">
+          <Replay url={recordingUrl} transcripts={transcripts} />
+          <HomeButton>Home</HomeButton>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-y-4">
+          <h1 className="text-4xl">Invalid URL 🫠</h1>
+          <Link href="/">
+            <Button>Take me back</Button>
+          </Link>
+        </div>
+      )}
     </main>
   );
 }

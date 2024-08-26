@@ -25,6 +25,12 @@ export async function getRecording({ interviewId }: { interviewId: number }) {
   return res;
 }
 
+export async function getAllRecordings() {
+  const res = await db.select().from(recordings).limit(10);
+
+  return res;
+}
+
 export async function getVideo({ interviewId }: { interviewId: number }) {
   const [res] = await db
     .select()

@@ -80,7 +80,7 @@ export function ManagedWebcam({
     if (streamReady) {
       startVideoRecording();
     }
-  }, [streamReady, startVideoRecording]);
+  }, [streamReady]);
 
   useEffect(() => {
     if (terminateInterview) {

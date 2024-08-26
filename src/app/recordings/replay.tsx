@@ -1,9 +1,11 @@
 "use client";
 
+import { Button } from "~/components/button";
 import { useTranscriptSync } from "~/hooks/useTranscripts";
-import { formatTime } from "~/lib/utils";
+import { cn, formatTime } from "~/lib/utils";
 import { messages } from "~/server/db/schema";
 import { InferSelectModel } from "drizzle-orm";
+import { useState } from "react";
 
 import { useVideoControl, Video } from "./video";
 
@@ -16,16 +18,69 @@ export function Replay({
   url: string;
   transcripts: Message[];
 }) {
-  const { videoRef, jumpToTime } = useVideoControl();
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const {
+    videoRef,
+    jumpToTime,
+    setPlaybackRate: vcSetPlaybackRate,
+  } = useVideoControl();
   const { transcriptRef, isCurrentTranscript } = useTranscriptSync(
     videoRef,
     transcripts,
   );
+  const adjustPlayback = (playbackRate: number) => {
+    setPlaybackRate(playbackRate);
+    vcSetPlaybackRate(playbackRate);
+  };
 
   return (
     <div className="rounded-md bg-apriora-blue px-40 py-20">
-      <div className="flex h-[32rem] items-center overflow-hidden rounded-lg bg-gray-900">
-        <Video url={url} ref={videoRef} className="" />
+      <div className="flex h-[36rem] items-center overflow-hidden rounded-lg bg-gray-900">
+        <div className="flex flex-col items-center">
+          <Video url={url} ref={videoRef} className="" />
+          <div className="flex items-center justify-center gap-x-2">
+            <Button
+              variant="tertiary"
+              onClick={() => adjustPlayback(0.5)}
+              className={cn(
+                "px-3 py-1 text-sm",
+                playbackRate === 0.5 && "bg-gray-700",
+              )}
+            >
+              0.5x
+            </Button>
+            <Button
+              variant="tertiary"
+              onClick={() => adjustPlayback(1.0)}
+              className={cn(
+                "px-3 py-1 text-sm",
+                playbackRate === 1 && "bg-gray-700",
+              )}
+            >
+              1x
+            </Button>
+            <Button
+              variant="tertiary"
+              onClick={() => adjustPlayback(1.5)}
+              className={cn(
+                "px-3 py-1 text-sm",
+                playbackRate === 1.5 && "bg-gray-700",
+              )}
+            >
+              1.5x
+            </Button>
+            <Button
+              variant="tertiary"
+              onClick={() => adjustPlayback(2.0)}
+              className={cn(
+                "px-3 py-1 text-sm",
+                playbackRate === 2 && "bg-gray-700",
+              )}
+            >
+              2x
+            </Button>
+          </div>
+        </div>
 
         <div className="flex h-full w-72 flex-col items-center justify-start gap-y-2 bg-gray-100">
           <div className="w-full border-b border-gray-400 px-10 pb-4 pt-6">

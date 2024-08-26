@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "~/lib/utils";
-import { forwardRef, useCallback, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useRef } from "react";
 
 export function useVideoControl() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -12,7 +12,13 @@ export function useVideoControl() {
     }
   }, []);
 
-  return { videoRef, jumpToTime };
+  const setPlaybackRate = (playbackRate: number) => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = playbackRate;
+    }
+  };
+
+  return { videoRef, jumpToTime, setPlaybackRate };
 }
 
 export const Video = forwardRef<

@@ -33,16 +33,17 @@ export function ManagedWebcam({
   const [streamReady, setStreamReady] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
 
-  const { startVideoRecording, stopVideoRecording } = useVideoRecorder({
-    interviewId,
-    webcamRef,
-  });
+  const { startVideoRecording, stopVideoRecording, uploadVideo } =
+    useVideoRecorder({
+      interviewId,
+      webcamRef,
+    });
   const { startAudioRecording, stopAudioRecording } = useAudioRecorder({
     onResponseStart: (
       setStartTime: React.Dispatch<React.SetStateAction<number>>,
     ) => {
       const DELAY = 1000;
-      setStartTime(calcTimeElapsed(interviewStartTime) - DELAY);
+      setStartTime(calcTimeElapsed(interviewStartTime) + DELAY);
       setIsCapturing(true);
       interruptInterviewer();
     },
@@ -63,9 +64,14 @@ export function ManagedWebcam({
 
   async function closeWebcam() {
     interruptInterviewer();
-    await stopVideoRecording().catch((err) =>
-      console.error("Error stopping video recording:", err),
-    );
+    await stopVideoRecording()
+      .then((blob) => {
+        if (!blob) {
+          throw new Error("No video blob found");
+        }
+        uploadVideo(blob);
+      })
+      .catch((err) => console.error("webcam:", err));
 
     router.push(`/recordings/${interviewId}`);
   }

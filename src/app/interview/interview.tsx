@@ -1,6 +1,6 @@
 "use client";
 
-import { storeMessage } from "~/actions/interview";
+import { storeMessage } from "~/actions/postgres";
 import { useConversation } from "~/hooks/useConversation";
 import { useInterviewer } from "~/hooks/useInterviewer";
 import { messages } from "~/server/db/schema";

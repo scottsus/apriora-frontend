@@ -1,9 +1,11 @@
 "use client";
 
-import { startInterview } from "~/actions/interview";
+import { startInterview } from "~/actions/postgres";
 import { Button } from "~/components/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+
+const INTERVIEWEE = "scott";
 
 export function StartInterviewButton({
   children,
@@ -12,12 +14,12 @@ export function StartInterviewButton({
 }) {
   const router = useRouter();
   const onClick = () => {
-    startInterview().then((id) => {
-      if (!id) {
+    startInterview({ interviewee: INTERVIEWEE }).then((res) => {
+      if (!res) {
         toast.error("No interview id. Please try again.");
         return;
       }
-      router.push(`interview/${id}`);
+      router.push(`interview/${res.id}`);
     });
   };
 

@@ -1,7 +1,7 @@
 "use server";
 
-import { uploadAudio } from "./aws";
-import { storeAudio } from "./interview";
+import { storeAudio } from "./postgres";
+import { uploadAudio } from "./s3";
 
 export async function recordInterviewerAudio(formData: FormData) {
   const interviewId = Number(formData.get("interviewId"));

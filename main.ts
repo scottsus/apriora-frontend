@@ -99,4 +99,4 @@ async function main(interviewId: number) {
   );
 }
 
-main(21);
+main(3);

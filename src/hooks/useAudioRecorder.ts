@@ -33,14 +33,13 @@ export function useAudioRecorder({
     }
 
     const audioTrack = stream.getAudioTracks()[0];
-
     if (!audioTrack) {
       toast.error("Audio track unavailable. Will not save audio feed.");
       return;
     }
 
-    const combinedStream = new MediaStream([audioTrack]);
-    audioRecorderRef.current = new MediaRecorder(combinedStream, {
+    const audioStream = new MediaStream([audioTrack]);
+    audioRecorderRef.current = new MediaRecorder(audioStream, {
       mimeType: "video/webm",
     });
     audioRecorderRef.current.addEventListener(
@@ -55,8 +54,8 @@ export function useAudioRecorder({
 
     if (audioRecorderRef.current) {
       audioRecorderRef.current.stop();
-      await new Promise<void>((resolve) => {
-        audioRecorderRef.current!.addEventListener("stop", () => resolve(), {
+      await new Promise<void>((res) => {
+        audioRecorderRef.current!.addEventListener("stop", () => res(), {
           once: true,
         });
       });

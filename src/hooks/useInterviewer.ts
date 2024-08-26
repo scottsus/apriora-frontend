@@ -1,7 +1,7 @@
 "use client";
 
 import { recordInterviewerAudio } from "~/actions/audio";
-import { storeMessage } from "~/actions/interview";
+import { storeMessage } from "~/actions/postgres";
 import { textToMp3 } from "~/actions/speak";
 import { interviewerResponseSchema } from "~/app/api/interview/schema";
 import { base64ToBlob } from "~/lib/utils";
@@ -115,7 +115,8 @@ export function useInterviewer({
     formData.append("audio", speechBlob);
     formData.append("relativeStartTime", relativeStartTime.toString());
 
-    return await recordInterviewerAudio(formData);
+    await recordInterviewerAudio(formData);
+    console.log("saved interviewer audio");
   }
 
   function interviewerStops() {

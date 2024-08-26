@@ -22,6 +22,7 @@ export function Replay({
       <Video url={url} ref={videoRef} />
       {transcripts.map((message) => (
         <p
+          key={message.id}
           className="w-1/2 cursor-pointer rounded-md bg-gray-200 p-3 hover:bg-gray-100"
           onClick={() => jumpToTime(message.startTime / 1000)}
         >

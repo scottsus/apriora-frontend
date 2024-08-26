@@ -190,31 +190,63 @@ export const messagesRelations = relations(messages, ({ one }) => ({
   }),
 }));
 
-export const videos = createTable("videos", {
-  id: uuid("id")
-    .default(sql`gen_random_uuid()`)
-    .primaryKey()
-    .notNull(),
-  interviewId: integer("interview_id")
-    .notNull()
-    .references(() => interviews.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
-  s3FileName: text("s3_file_name").notNull(),
-});
+export const recordings = createTable(
+  "recordings",
+  {
+    id: uuid("id")
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    interviewId: integer("interview_id")
+      .notNull()
+      .references(() => interviews.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    s3FileName: text("s3_file_name").notNull(),
+  },
+  (recording) => ({
+    idIdx: index("recordings_id_idx").on(recording.id),
+  }),
+);
 
-export const audios = createTable("audios", {
-  id: uuid("id")
-    .default(sql`gen_random_uuid()`)
-    .primaryKey()
-    .notNull(),
-  interviewId: integer("interview_id")
-    .notNull()
-    .references(() => interviews.id, {
-      onDelete: "cascade",
-      onUpdate: "cascade",
-    }),
-  s3FileName: text("s3_file_name").notNull(),
-  startTime: bigint("start_time", { mode: "number" }).notNull(),
-});
+export const videos = createTable(
+  "videos",
+  {
+    id: uuid("id")
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    interviewId: integer("interview_id")
+      .notNull()
+      .references(() => interviews.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    s3FileName: text("s3_file_name").notNull(),
+  },
+  (video) => ({
+    idIdx: index("videos_id_idx").on(video.id),
+  }),
+);
+
+export const audios = createTable(
+  "audios",
+  {
+    id: uuid("id")
+      .default(sql`gen_random_uuid()`)
+      .primaryKey()
+      .notNull(),
+    interviewId: integer("interview_id")
+      .notNull()
+      .references(() => interviews.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
+    s3FileName: text("s3_file_name").notNull(),
+    startTime: bigint("start_time", { mode: "number" }).notNull(),
+  },
+  (audio) => ({
+    idIdx: index("audios_id_idx").on(audio.id),
+  }),
+);

@@ -1,5 +1,5 @@
 {
-  "id": "18e5c20e-935b-42fd-9fe1-376450d31140",
+  "id": "390d91e9-1a47-42ca-8f80-85a32ae1cf70",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -148,7 +148,23 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "audios_id_idx": {
+          "name": "audios_id_idx",
+          "columns": [
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "apriora_audios_interview_id_apriora_interviews_id_fk": {
           "name": "apriora_audios_interview_id_apriora_interviews_id_fk",
@@ -389,6 +405,65 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "public.apriora_recordings": {
+      "name": "apriora_recordings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "interview_id": {
+          "name": "interview_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "s3_file_name": {
+          "name": "s3_file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "recordings_id_idx": {
+          "name": "recordings_id_idx",
+          "columns": [
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "apriora_recordings_interview_id_apriora_interviews_id_fk": {
+          "name": "apriora_recordings_interview_id_apriora_interviews_id_fk",
+          "tableFrom": "apriora_recordings",
+          "tableTo": "apriora_interviews",
+          "columnsFrom": [
+            "interview_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.apriora_session": {
       "name": "apriora_session",
       "schema": "",
@@ -548,7 +623,23 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "videos_id_idx": {
+          "name": "videos_id_idx",
+          "columns": [
+            {
+              "expression": "id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "apriora_videos_interview_id_apriora_interviews_id_fk": {
           "name": "apriora_videos_interview_id_apriora_interviews_id_fk",

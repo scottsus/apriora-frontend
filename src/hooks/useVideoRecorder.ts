@@ -1,7 +1,7 @@
 "use client";
 
-import { uploadRecording } from "~/actions/aws";
-import { storeVideo } from "~/actions/interview";
+import { storeVideo } from "~/actions/postgres";
+import { uploadVideo as uploadVideoServer } from "~/actions/s3";
 import { RefObject, useCallback, useRef } from "react";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
@@ -41,7 +41,7 @@ export function useVideoRecorder({
     ) {
       videoRecorderRef.current.stop();
 
-      await new Promise<void>((res) => {
+      return await new Promise<Blob>((res) => {
         videoRecorderRef.current!.addEventListener(
           "stop",
           async () => {
@@ -50,10 +50,7 @@ export function useVideoRecorder({
             });
             videoBlobsRef.current = [];
 
-            const fileName = `recording_${Date.now()}.webm`;
-            await uploadVideoInChunks(videoBlob, fileName);
-
-            res();
+            res(videoBlob);
           },
           { once: true },
         );
@@ -61,7 +58,9 @@ export function useVideoRecorder({
     }
   }, []);
 
-  async function uploadVideoInChunks(videoBlob: Blob, fileName: string) {
+  async function uploadVideo(videoBlob: Blob) {
+    const fileName = `${Date.now()}.webm`;
+
     // S3 Multipart minimum requirement
     const chunkSize = 5.1 * 1024 * 1024;
     const totalSize = videoBlob.size;
@@ -102,7 +101,7 @@ export function useVideoRecorder({
         formData.append("parts", JSON.stringify(parts));
       }
 
-      const result = await uploadRecording(formData);
+      const result = await uploadVideoServer(formData);
       if (i == totalChunks - 1) {
         await storeVideo({ interviewId, fileName });
       }
@@ -118,5 +117,5 @@ export function useVideoRecorder({
     console.log(`Uploaded ${fileName} in ${totalChunks} parts.`);
   }
 
-  return { startVideoRecording, stopVideoRecording };
+  return { startVideoRecording, stopVideoRecording, uploadVideo };
 }

@@ -1,9 +1,12 @@
 import { getAllRecordings } from "~/actions/postgres";
 import { getRecordingUrl } from "~/actions/s3";
 import { HomeButton } from "~/components/buttons";
+import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 
 export default async function RecordingsPage() {
+  noStore();
+
   const recordings = await getAllRecordings();
   const recordingUrls = await Promise.all(
     recordings.map((r) => getRecordingUrl(r.s3FileName)),

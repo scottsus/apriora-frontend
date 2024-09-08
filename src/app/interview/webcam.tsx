@@ -1,5 +1,6 @@
 "use client";
 
+import { processRecordingOffline } from "~/actions/process";
 import { useAudioAnalyzer } from "~/hooks/useAudioAnalyzer";
 import { useAudioRecorder } from "~/hooks/useAudioRecorder";
 import { useVideoRecorder } from "~/hooks/useVideoRecorder";
@@ -64,16 +65,20 @@ export function ManagedWebcam({
 
   async function closeWebcam() {
     interruptInterviewer();
-    await stopVideoRecording()
-      .then((blob) => {
-        if (!blob) {
-          throw new Error("No video blob found");
-        }
-        uploadVideo(blob);
-      })
-      .catch((err) => console.error("webcam:", err));
 
-    router.push(`/recordings/${interviewId}`);
+    try {
+      const videoBlob = await stopVideoRecording();
+      if (!videoBlob) {
+        throw new Error("No video blob found");
+      }
+
+      await uploadVideo(videoBlob);
+      processRecordingOffline({ interviewId });
+    } catch (err) {
+      console.error("webcam:", err);
+    } finally {
+      router.push(`/recordings/${interviewId}`);
+    }
   }
 
   useEffect(() => {
